@@ -22,7 +22,7 @@
 
 
 import flask
-from flask import Flask, request
+from flask import Flask, jsonify, redirect, request
 import json
 app = Flask(__name__)
 app.debug = True
@@ -74,27 +74,41 @@ def flask_post_json():
 @app.route("/")
 def hello():
     '''Return something coherent here.. perhaps redirect to /static/index.html '''
-    return None
+    # https://stackoverflow.com/questions/14343812/redirecting-to-url-in-flask
+    return redirect("/static/index.html", code=302)
 
 @app.route("/entity/<entity>", methods=['POST','PUT'])
 def update(entity):
     '''update the entities via this interface'''
-    return None
+    data = flask_post_json()
+    myWorld.set(entity, data)
+    # https://stackoverflow.com/questions/11332465/how-to-return-value-from-python-as-json
+    # https://stackoverflow.com/questions/45412228/sending-json-and-status-code-with-a-flask-response
+    return jsonify(myWorld.get(entity))
 
 @app.route("/world", methods=['POST','GET'])    
 def world():
     '''you should probably return the world here'''
-    return None
+    if request.method == 'GET':
+        return jsonify(myWorld.world())
+    elif request.method == 'POST':
+        data = flask_post_json()
+        for key, value in data.items():
+            myWorld.set(key, value)
+        return jsonify(myWorld.world())
+
+
 
 @app.route("/entity/<entity>")    
 def get_entity(entity):
     '''This is the GET version of the entity interface, return a representation of the entity'''
-    return None
+    return jsonify(myWorld.get(entity))
 
 @app.route("/clear", methods=['POST','GET'])
 def clear():
     '''Clear the world out!'''
-    return None
+    myWorld.clear()
+    return jsonify(myWorld.world())
 
 if __name__ == "__main__":
     app.run()
