@@ -149,6 +149,7 @@ function addEntity(entity, data) {
     drawNextFrame(); // (but should we?)
     //XXX: Send a XHTML Request that updates the entity you just  modified!
     sendJSONXMLHTTPRequest("http://127.0.0.1:5000/entity/"+entity, data, drawCircle)
+    drawNextFrame();
 
 }
 
@@ -296,6 +297,7 @@ function sendGetJSONXMLHTTPRequest(url, callback) {
 
 function setWorld(newWorld) {
     world = newWorld;
+    drawNextFrame();
 }
 
 function update() {
